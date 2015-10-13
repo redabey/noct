@@ -1,0 +1,7 @@
+# noct
+# Packages list
+
+iron:router              1.0.12  Routing specifically designed for Meteor.
+mrt:bootstrap-3          0.3.8  Provides bootstrap 3.
+reactive-var             1.0.6  Reactive variable.
+
