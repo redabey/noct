@@ -1,0 +1,269 @@
+<template name="caseTemplate">
+    <div class="col-md-7">
+        <div class="panel panel-primary">
+            <div class="panel-heading text-center">
+                <h2 class="panel-title">
+{{#if currentCaseTemplate.title}}
+                Modèle de dossier : {{currentCaseTemplate.title}}
+{{else}}
+                Nouveau modèle de dossier
+{{/if}}
+                </h2>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                <label for="case-template-title">Intitulé du modèle</label>
+                <input type="text" 
+                       id="case-template-title"
+                       class="case-template-attr form-control"
+                       name="title"
+                       value="{{currentCaseTemplate.title}}" />
+                <label for="case-template-title-nature">Nature du dossier</label>
+                <input type="text"
+                       id="case-template-title-nature"
+                       class="case-template-attr form-control" 
+                       name="nature" 
+                       value="{{currentCaseTemplate.nature}}" />
+                <label for="case-template-desc">Description du modèle</label>
+                <textarea 
+                          class="case-template-attr form-control"
+                          id="case-template-desc"
+                          name="desc">{{currentCaseTemplate.desc}}</textarea>
+            </div>
+                
+                <div class="panel panel-primary">
+                <div class="panel-heading text-center">
+                    Étape(s) de dossier
+                </div>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <button id="add-step" class="btn btn-success btn-md pull-right">
+                                <span class="glyphicon glyphicon-plus"></span>
+                                Nouvelle étape de dossier
+                            </button>
+                        </div>
+                        <br/>
+                        <div class='clearfix'></div>
+{{> caseSteps caseSteps=currentCaseTemplate.steps}}
+                    </div>
+                </div>
+                <button id="clear-template" class="btn btn-danger btn-md pull-right">Effacter tout</button>
+                <button id="save-template" class="btn btn-success btn-md pull-right">Enregistrer</button>
+            </div>     
+        </div>
+    </div>
+</template>
+
+
+
+
+
+<template name="caseSteps">
+    <div id="accordion" class="panel-group">
+{{#each caseStep in caseSteps}}
+    {{#let stepnum=@index}}
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a id="apanel-{{stepnum}}" data-toggle="collapse" data-parent="#accordion" href="#collapse-{{stepnum}}">
+                        <span class="glyphicon glyphicon-plus"></span></a>
+    {{#if caseStep.title}}
+                        Étape : {{caseStep.title}}
+    {{else}}
+                        Nouvelle étape
+    {{/if}}
+                    <div class="btn-group pull-right" role="group">
+                        <button type="button" class="case-step-action btn btn-success btn-md" stepnum="{{stepnum}}" action="up">
+                            <span class="glyphicon glyphicon-circle-arrow-up"></span>
+                            Monter
+                        </button>
+                        <button type="button" class="case-step-action btn btn-success btn-md" stepnum="{{stepnum}}" action="down">
+                            <span class="glyphicon glyphicon-circle-arrow-down"></span>
+                            Descendre
+                        </button>
+                        <button type="button" class="case-step-action btn btn-danger btn-md" stepnum="{{stepnum}}" action="del">
+                            <span class="glyphicon glyphicon-remove-circle"></span>
+                            Supprimer
+                        </button>                        
+                    </div>
+                    <div class='clearfix'></div>
+                </h4>
+            </div>
+            <div id="collapse-{{stepnum}}" class="panel-collapse collapse">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="case-template-step-{{stepnum}}-title">Intitulé de l'étape</label>
+                        <input type="text" 
+                               id="case-template-step-{{stepnum}}-title"
+                               class="case-step-attr form-control" 
+                               name="title" 
+                               stepnum="{{stepnum}}"
+                               value="{{caseStep.title}}" />
+                        <label for="case-template-step-{{stepnum}}-titlefinished">Intitulé de l'étape échevée</label>
+                        <input type="text" 
+                               id="case-template-step-{{stepnum}}-titlefinished"
+                               class="case-step-attr form-control" 
+                               name="titlefinished" 
+                               stepnum="{{stepnum}}"
+                               value="{{caseStep.titlefinished}}" />
+                        <label for="case-template-step-{{stepnum}}-desc"> Description de l'étape </label>
+                        <textarea 
+                                  id="case-template-step-{{stepnum}}-desc"
+                                  class="case-step-attr form-control" 
+                                  name="desc" 
+                                  stepnum="{{stepnum}}">{{caseStep.desc}}</textarea>
+                        <label class="checkbox-inline">
+                            <input type="checkbox"
+                                   class="case-step-attr"
+                                   name="alert"
+                                   stepnum="{{stepnum}}"
+                                   value="true"
+                                   checked="{{isChecked 'alert' stepnum}}">Alerte client
+                        </label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" 
+                                   class="case-step-attr" 
+                                   name="blocking"  
+                                   stepnum="{{stepnum}}" 
+                                   value="true"
+                                   checked="{{isChecked 'blocking' stepnum}}">Étape bloquante
+                        </label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox"
+                                   class="case-step-attr" 
+                                   name="hidden" 
+                                   stepnum="{{stepnum}}"
+                                   value="true"
+                                   checked="{{isChecked 'hidden' stepnum}}">Étape masquée
+                        </label>
+                        <div class='clearfix'></div>
+                        <label for="case-template-step-{{stepnum}}-duration">Durée (jours)</label>
+                        <input type="text" 
+                               id="case-template-step-{{stepnum}}-duration"
+                               class="case-step-attr form-control" 
+                               name="duration" 
+                               stpnum="{{stepnum}}" 
+                               value="{{caseStep.duration}}" />
+                    </div>
+                    
+                    <div class="panel panel-primary">
+                        <div class="panel-heading text-center">
+                            Événement(s) de dossier
+                        </div>
+                        <div class="panel-body">
+                            <div class="form-group">
+                                <button class="add-event btn btn-success btn-md pull-right" stepnum="{{stepnum}}">
+                                <span class="glyphicon glyphicon-plus"></span>
+                                Nouvel événement d'étape
+                            </button>
+                        </div>
+                        <div class='clearfix'></div>
+                            <div id="accordion-{{stepnum}}" class="panel-group">
+{{> caseEvents caseEvents=caseStep.events stepnum=stepnum}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{/let}}    
+{{/each}}
+    </div>
+</template>
+
+<template name="caseEvents">
+{{#each caseEvent in caseEvents}}
+    {{#let eventnum=@index}}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordionaccordion-{{stepnum}}" href="#collapse-{{stepnum}}-{{eventnum}}">
+                        <span class="glyphicon glyphicon-plus"></span></a>
+    {{#if caseEvent.title}}
+                        Événement : {{caseEvent.title}}
+    {{else}}
+                        Nouvel événement
+    {{/if}}
+                    <div class="btn-group pull-right" role="group">
+                        <button type="button" class="case-event-action btn btn-success btn-md" stepnum="{{stepnum}}" eventnum="{{eventnum}}" action="up">
+                            <span class="glyphicon glyphicon-circle-arrow-up"></span>
+                            Monter
+                        </button>
+                        <button type="button" class="case-event-action btn btn-success btn-md" stepnum="{{stepnum}}" eventnum="{{eventnum}}" action="down">
+                            <span class="glyphicon glyphicon-circle-arrow-down"></span>
+                            Descendre
+                        </button>
+                        <button type="button" class="case-event-action btn btn-danger btn-md" stepnum="{{stepnum}}" eventnum="{{eventnum}}" action="del">
+                            <span class="glyphicon glyphicon-remove-circle"></span>
+                            Supprimer
+                        </button>                        
+                    </div>
+                    <div class='clearfix'></div>
+                </h4>
+            </div>
+        <div id="collapse-{{stepnum}}-{{eventnum}}" class="panel-collapse collapse">
+            <div class="panel-body">
+                <div class="form-group">
+                <label for="case-template-event-{{stepnum}}-{{eventnum}}-title">Intitulé de l'événement</label>
+                <input type="text" 
+                       id="case-template-event-{{stepnum}}-{{eventnum}}-title"
+                       class="case-event-attr form-control" 
+                       name="title" 
+                       stepnum="{{stepnum}}" 
+                       eventnum="{{eventnum}}" 
+                       value="{{caseEvent.title}}" />
+                <label for="case-template-event-{{stepnum}}-{{eventnum}}-desc">Description de l'événement</label>
+                <textarea 
+                          id="case-template-event-{{stepnum}}-{{eventnum}}-desc"
+                          class="case-event-attr form-control" 
+                          name="desc" 
+                          stepnum="{{stepnum}}" 
+                          eventnum="{{eventnum}}" >{{caseEvent.desc}}</textarea>
+                <label class="checkbox-inline">
+                    <input type="checkbox"
+                           class="case-event-attr" 
+                           name="mandatory" 
+                           stepnum="{{stepnum}}" 
+                           eventnum="{{eventnum}}" 
+                           value=1
+                           checked>Obligatoire
+                </label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" 
+                           class="case-event-attr" 
+                           name="alert" 
+                           stepnum="{{stepnum}}" 
+                           eventnum="{{eventnum}}" 
+                           value=1>Alerte client
+                </label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" 
+                           class="case-event-attr" 
+                           name="alert" 
+                           stepnum="{{stepnum}}" 
+                           eventnum="{{eventnum}}" 
+                           value=1>Masqué
+                </label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" 
+                           class="case-event-attr" 
+                           name="blocking" 
+                           stepnum="{{stepnum}}" 
+                           eventnum="{{eventnum}}" 
+                           value=1>Bloquant
+                </label>
+                 <div class='clearfix'></div>
+                <label for="">Durée (jours)</label>
+                <input type="text"
+                       id="case-template-event-{{stepnum}}-{{eventnum}}-duration"
+                       class="case-event-attr form-control" 
+                       name="duration" 
+                       stepnum="{{stepnum}}" eventnum="{{eventnum}}" />
+            </div>            
+            </div>
+
+        </div>
+    </div>
+    {{/let}}
+{{/each}}
+</template>
