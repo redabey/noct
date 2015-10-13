@@ -104,7 +104,12 @@ Template.caseTemplate.events({
         if (!caset.steps[stepnum].events) {
             caset.steps[stepnum].events = [];
         }
-        caset.steps[stepnum].events.push({});
+        caset.steps[stepnum].events.push({
+          mandatory: true,
+          alert: false,
+          blocking: false,
+          hidden: false
+        });
         currentCaseTemplate.set(caset);
     },
 
