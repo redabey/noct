@@ -1,11 +1,10 @@
-
 var currentCaseTemplate = new ReactiveVar({});
 
 // Helpers.
 Template.caseTemplate.helpers({
     'currentCaseTemplate': function() {
         return currentCaseTemplate.get();
-    }    
+    }
 });
 
 Template.caseSteps.helpers({
@@ -30,12 +29,12 @@ Template.caseTemplate.events({
         caset[attr] = value;
         currentCaseTemplate.set(caset);
     },
-    
+
     'change .clean': function(event) {
         event.preventDefault();
         event.target.value = "";
     },
-    
+
     'click #add-step': function(event, tpl) {
         event.preventDefault();
         var caset = currentCaseTemplate.get();
@@ -48,18 +47,18 @@ Template.caseTemplate.events({
             hidden: false
         });
         currentCaseTemplate.set(caset);
-        Tracker.afterFlush(function () {
+        Tracker.afterFlush(function() {
             var focusedid = "apanel-" + (caset.steps.length - 1);
-            tpl.find('#'+focusedid).focus();
+            tpl.find('#' + focusedid).focus();
         });
     },
-    
+
     'click .case-step-action': function(event, tpl) {
         event.preventDefault();
         var action = event.target.getAttribute("action");
         var stepnum = parseInt(event.target.getAttribute("stepnum"));
         var caset = currentCaseTemplate.get();
-        switch(action) {
+        switch (action) {
             case "del":
                 caset.steps.splice(stepnum, 1);
                 currentCaseTemplate.set(caset);
@@ -69,25 +68,25 @@ Template.caseTemplate.events({
                     var newpos = (stepnum === 0) ? caset.steps.length - 1 : stepnum - 1;
                     caset.steps.move(stepnum, newpos);
                     currentCaseTemplate.set(caset);
-                    Tracker.afterFlush(function () {
+                    Tracker.afterFlush(function() {
                         var focusedid = "apanel-" + newpos;
-                        tpl.find('#'+focusedid).focus()
+                        tpl.find('#' + focusedid).focus()
                     });
-                }                
+                }
                 break;
             case "down":
                 if (caset.steps.length > 1) {
                     var newpos = (stepnum === caset.steps.length - 1) ? 0 : stepnum + 1;
                     caset.steps.move(stepnum, newpos);
                     currentCaseTemplate.set(caset);
-                    Tracker.afterFlush(function () {
+                    Tracker.afterFlush(function() {
                         var focusedid = "apanel-" + newpos;
-                        tpl.find('#'+focusedid).focus();
+                        tpl.find('#' + focusedid).focus();
                     });
-                }                
+                }
         }
     },
-    
+
     'change .case-step-attr': function(event) {
         event.preventDefault();
         var value = event.target.value;
@@ -97,7 +96,7 @@ Template.caseTemplate.events({
         caset["steps"][stepnum][attr] = value;
         currentCaseTemplate.set(caset);
     },
-    
+
     'click .add-event': function(event) {
         event.preventDefault();
         var stepnum = parseInt(event.target.getAttribute("stepnum"));
@@ -108,14 +107,14 @@ Template.caseTemplate.events({
         caset.steps[stepnum].events.push({});
         currentCaseTemplate.set(caset);
     },
-    
+
     'click .case-event-action': function(event) {
         event.preventDefault();
         var action = event.target.getAttribute("action");
         var stepnum = parseInt(event.target.getAttribute("stepnum"));
         var eventnum = parseInt(event.target.getAttribute("eventnum"));
         var caset = currentCaseTemplate.get();
-        switch(action) {
+        switch (action) {
             case "del":
                 caset.steps[stepnum].events.splice(eventnum, 1);
                 currentCaseTemplate.set(caset);
@@ -125,17 +124,17 @@ Template.caseTemplate.events({
                     var newpos = (eventnum === 0) ? caset.steps[stepnum].events.length - 1 : eventnum - 1;
                     caset.steps[stepnum].events.move(eventnum, newpos);
                     currentCaseTemplate.set(caset);
-                }                
+                }
                 break;
             case "down":
                 if (caset.steps[stepnum].events.length > 1) {
-                    var newpos = (eventnum === caset.steps[stepnum].events.length - 1) ? 0 :eventnum + 1;
+                    var newpos = (eventnum === caset.steps[stepnum].events.length - 1) ? 0 : eventnum + 1;
                     caset.steps[stepnum].events.move(eventnum, newpos);
                     currentCaseTemplate.set(caset);
-                }                
+                }
         }
     },
-    
+
     'change .case-event-attr': function(event) {
         event.preventDefault();
         var value = event.target.value;
@@ -146,13 +145,12 @@ Template.caseTemplate.events({
         caset["steps"][stepnum]["events"][eventnum][attr] = value;
         currentCaseTemplate.set(caset);
     },
-    
-    'click #clear-template': function(event)
-    {
+
+    'click #clear-template': function(event) {
         event.preventDefault();
         currentCaseTemplate.set({});
     },
-    
+
     'click #save-template': function(event) {
         event.preventDefault();
         console.log(JSON.stringify(currentCaseTemplate.get()));
